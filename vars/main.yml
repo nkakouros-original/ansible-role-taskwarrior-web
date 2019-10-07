@@ -1,0 +1,6 @@
+---
+
+ruby_install_gems:
+  - taskwarrior-web
+
+ruby_install_gems_user: "{{ taskweb_user }}"

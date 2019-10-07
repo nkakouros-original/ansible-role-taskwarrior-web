@@ -1,0 +1,20 @@
+---
+
+- name: Get gem installation path
+  shell: gem environment | grep 'USER INSTALLATION'
+  register: __result
+  become: true
+  become_user: "{{ taskweb_user }}"
+
+- set_fact:
+    taskweb_gem_path: "{{ __result.stdout | regex_replace('.*: (.*)', '\\1') }}"
+
+- name: Get taskweb version
+  shell: gem list | grep taskwarrior-web
+  register: __result
+  become: true
+  become_user: "{{ taskweb_user }}"
+
+- set_fact:
+    taskweb_version:
+      "{{ __result.stdout | regex_replace('.* \\((.*)\\)', '\\1') }}"

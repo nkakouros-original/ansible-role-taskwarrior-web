@@ -1,0 +1,13 @@
+---
+
+- name: Upload service file
+  template:
+    src: taskweb.service.j2
+    dest: /etc/systemd/system/taskweb.service
+  notify: taskweb restart service
+
+- name: Start taskweb service
+  systemd:
+    name: taskweb.service
+    state: started
+    enabled: true

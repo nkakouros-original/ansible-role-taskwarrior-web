@@ -1,0 +1,13 @@
+---
+
+taskweb_enabled: true
+# Set to false to completely disable the role
+
+taskweb_user: task
+# The user to run the taskweb app
+
+taskweb_host: 127.0.0.1
+# The ip address the app will listen on
+
+taskweb_port: 5678
+# The port the app will listen on
