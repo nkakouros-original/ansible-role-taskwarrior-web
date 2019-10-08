@@ -1,38 +1,101 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+Installs [taskwarrior-web](https://github.com/AndresBott/ansible-autodoc).
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+A working installation of taskwarrior and taskserver on the server where
+taskwarrior-web will be installed on. You can use the two roles below to
+automate that part as well:
+
+- [nkakouros.taskserver](https://github.com/AndresBott/ansible-autodoc)
+- [kulla.taskwarrior](https://github.com/kulla/ansible-role-taskwarrior)
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+See the [defaults/main.yml](defaults/main.yml) file for a list of the role
+variables with descriptions.
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+This role uses
+[geerlingguy.ruby](https://github.com/geerlingguy/ansible-role-ruby) to install
+ruby and `taskwarrior-web`. This happens automatically, you don't need to take
+additional steps.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+```
+- hosts: servers
+  roles:
+    - nkakouros.taskserver
+    - kulla.taskwarrior
+    - nkakouros.taskwarrior-web
+  vars:
+    # nkakouros.taskserver configuration
+    taskd_group: cert-readers
+    taskd_server: tasks.example.com
+    taskd_oranizations:
+      - Private
+    taskd_users:
+      - name: My Name
+        organization: Private
+    taskd_selfsigned: true
+    taskd_selfsigned_clients_download_dir: "/home/.task/taskd/"
+    taskd_selfsigned_cn: tasks.example.com
+    taskd_selfsigned_organization: me
+    taskd_selfsigned_country: GR
+    taskd_selfsigned_state: Athens
+    taskd_selfsigned_locality: Athens
+    taskd_taskwarrior_config_path: "/home/.task/taskd/taskd.rc"
+    taskd_taskwarrior_user: "{{ taskwarrior_user_id }}"
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+    # kulla.taskwarrior role configuration
+    taskwarrior_packages:
+      - taskwarrior
+    taskwarrior_user_id: taskwarrior
+    taskwarrior_configuration: >-
+      {{
+        (
+          lookup('file', taskd_selfsigned_clients_download_dir + '/taskd.rc')
+        ).splitlines()[-2:]
+        | join('
+        ')
+      }}
+    taskwarrior_ca_certificate: >-
+      {{ taskd_selfsigned_clients_download_dir }}/ca.cert.pem
+    taskwarrior_client_certificate: >-
+      {{ taskd_selfsigned_clients_download_dir }}/{{
+        taskd_users[0].name | replace(' ', '_') }}.cert.pem
+    taskwarrior_client_key: >-
+      {{ taskd_selfsigned_clients_download_dir }}/{{
+        taskd_users[0].name | replace(' ', '_') }}.key.pem
+    taskserver_cron_files:
+      - file: taskwarrior-sync
+        user: "{{ taskserver_accounts[0].name }}"
+        jobs:
+          - name: sync taskwarrior
+            minute: "*/10"
+            job: task sync
+            user: "{{ taskwarrior_user_id }}"
+
+    # nkakouros.taskwarrior-web configuration
+    taskweb_user: "{{ taskwarrior_user_id }}"
+    taskweb_port: 45678
+    taskweb_host: 127.0.0.1
+```
 
 License
 -------
 
-BSD
+GPLv3
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Nikolaos Kakouros (nkak@kth.se)

@@ -1,6 +1,7 @@
 ---
 
 galaxy_info:
+  role_name: taskwarrior-web
   author: Nikolaos Kakouros
   description: Installs taskwarrior-web
   license: GPLv3
