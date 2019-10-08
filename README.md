@@ -1,6 +1,6 @@
 [![Build
 Status](https://travis-ci.com/nkakouros-original/ansible-role-taskwarrior-web.svg?branch=master)](https://travis-ci.com/nkakouros-original/ansible-role-taskwarrior-web)
-[![Galaxy](https://img.shields.io/badge/galaxy-nkakouros.taskwarrior-web-blue.svg)](https://galaxy.ansible.com/nkakouros/taskwarrior-web/)
+[![Galaxy](https://img.shields.io/badge/galaxy-nkakouros.taskweb-blue.svg)](https://galaxy.ansible.com/nkakouros/taskwarrior-web/)
 
 Role Name
 =========
