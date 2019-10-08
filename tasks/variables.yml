@@ -5,6 +5,7 @@
   register: __result
   become: true
   become_user: "{{ taskweb_user }}"
+  changed_when: false
 
 - set_fact:
     taskweb_gem_path: "{{ __result.stdout | regex_replace('.*: (.*)', '\\1') }}"
@@ -14,6 +15,7 @@
   register: __result
   become: true
   become_user: "{{ taskweb_user }}"
+  changed_when: false
 
 - set_fact:
     taskweb_version:

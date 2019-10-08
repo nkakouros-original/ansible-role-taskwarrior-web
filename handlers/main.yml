@@ -3,6 +3,7 @@
 - name: Restart taskweb service
   systemd:
     name: taskweb.service
+    enabled: true
     state: restarted
     daemon-reload: true
   listen: taskweb restart service
